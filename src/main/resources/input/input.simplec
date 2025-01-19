@@ -1,6 +1,5 @@
-
 A = scanf();
 B = scanf();
-A--;
-C = A+B;
-printf(C);
+C = scanf();
+D = scanf();
+printf(A+B+C+D);
