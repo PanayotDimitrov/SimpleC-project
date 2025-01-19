@@ -6,7 +6,9 @@ expression      : assignment
                 | printfFunc
                 | scanfFunc
                 | additiveExpression;
-assignment      : Ident '=' expression;
+assignment      : Ident '=' expression
+                | Ident '++'
+                | Ident '--';
 printfFunc      : 'printf' '(' expression ')';
 scanfFunc       : 'scanf' '(' ')';
 additiveExpression : multiplicativeExpression (('+' | '-') multiplicativeExpression)*;

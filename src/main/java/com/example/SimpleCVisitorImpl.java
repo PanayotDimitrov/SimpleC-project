@@ -24,11 +24,33 @@ public class SimpleCVisitorImpl extends SimpleCBaseVisitor<Integer> {
 
     @Override
     public Integer visitAssignment(SimpleCParser.AssignmentContext ctx) {
-        String varName = ctx.Ident().getText(); // Variable name
-        int value = visit(ctx.expression());   // Evaluate the right-hand side
-        variables.put(varName, value);         // Store in the variable map
-        System.out.println("Assigned " + value + " to " + varName);
-        return value;
+        if (ctx.getChildCount() == 3) {
+            // Handle A = expression
+            String varName = ctx.Ident().getText();
+            int value = visit(ctx.expression());
+            variables.put(varName, value);
+            System.out.println("Assigned " + value + " to " + varName);
+            return value;
+        } else if (ctx.getChildCount() == 2) {
+            String varName = ctx.Ident().getText();
+            if (!variables.containsKey(varName)) {
+                throw new RuntimeException("Variable " + varName + " is not defined.");
+            }
+            if (ctx.getChild(1).getText().equals("++")) {
+                // Handle A++
+                int value = variables.get(varName) + 1;
+                variables.put(varName, value);
+                System.out.println(varName + " incremented to " + value);
+                return value;
+            } else if (ctx.getChild(1).getText().equals("--")) {
+                // Handle A--
+                int value = variables.get(varName) - 1;
+                variables.put(varName, value);
+                System.out.println(varName + " decremented to " + value);
+                return value;
+            }
+        }
+        throw new RuntimeException("Unknown assignment: " + ctx.getText());
     }
 
     @Override
@@ -41,7 +63,12 @@ public class SimpleCVisitorImpl extends SimpleCBaseVisitor<Integer> {
     @Override
     public Integer visitScanfFunc(SimpleCParser.ScanfFuncContext ctx) {
         System.out.print("Enter value: ");
-        int value = scanner.nextInt();
+        int value = 0;
+        try {
+            value = scanner.nextInt();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return value;
     }
 
@@ -69,7 +96,7 @@ public class SimpleCVisitorImpl extends SimpleCBaseVisitor<Integer> {
                 result *= value;
             } else if (op.equals("/")) {
                 result /= value;
-            } else {
+            } else if (op.equals("%")) {
                 result %= value;
             }
         }
