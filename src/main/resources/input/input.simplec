@@ -1,5 +1,4 @@
 A = scanf();
 B = scanf();
-C = scanf();
-D = scanf();
-printf(A+B+C+D);
+B++;
+printf(A+B);
